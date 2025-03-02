@@ -60,5 +60,7 @@ java {
 tasks.named<Test>("test") {
     useJUnitPlatform()
 
-    maxHeapSize = "1G"
+    testLogging {
+        events ("standardOut", "started", "passed", "skipped", "failed")
+    }
 }
