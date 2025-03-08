@@ -20,11 +20,14 @@ class TerminalSandBoxTest {
 
         if (!sandBox.exists(PosixPath.ofPosix("tmp12345"))) {
             log.info(sandBox.makeDir(PosixPath.ofPosix("tmp12345")).toString());
-            log.info("isFile=" + sandBox.isFolder(PosixPath.ofPosix("tmp12345")));
-            log.info("isFile=" + sandBox.isFolder(PosixPath.ofPosix(".")));
             sandBox.touch(PosixPath.ofPosix("file123456"));
-            log.info("isFile=" + sandBox.isFolder(PosixPath.ofPosix("file123456")));
-            log.info("isFile=" + sandBox.isFolder(PosixPath.ofPosix("file1234567")));
+
+            log.info("isFolder=" + sandBox.isFolder(PosixPath.ofPosix("file123456")));
+            log.info("isFolder=" + sandBox.isFolder(PosixPath.ofPosix("tmp12345")));
+            log.info("isFolder=" + sandBox.isFolder(PosixPath.ofPosix(".")));
+
+            log.info("isFile=" + sandBox.isFile(PosixPath.ofPosix("file123456")));
+            log.info("isFile=" + sandBox.isFile(PosixPath.ofPosix("file1234567")));
 
         }
 
