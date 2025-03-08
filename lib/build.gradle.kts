@@ -4,9 +4,22 @@
  * This generated file contains a sample Java library project to get you started.
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.13/userguide/building_java_projects.html in the Gradle documentation.
  */
+import org.gradle.api.tasks.bundling.Jar
+buildscript {
+    repositories {
+        mavenCentral()
+        //Needed only for SNAPSHOT versions
+        //maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    dependencies {
+        classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
+    }
+}
 plugins {
-    `java-library`
+    id("java-library")
     id("io.freefair.lombok") version "8.12.2"
+    id("maven-publish")
+    id("signing")
 }
 java {
     withJavadocJar()
@@ -49,9 +62,6 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-}
-
-java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
@@ -62,5 +72,63 @@ tasks.named<Test>("test") {
 
     testLogging {
         events ("standardOut", "started", "passed", "skipped", "failed")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "java-bash"
+            from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = "Java Bash"
+                description = "Run commands in bash terminal session"
+                url = "https://github.com/andreyzebin/java-bash"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://raw.githubusercontent.com/andreyzebin/java-bash/refs/heads/main/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "andreyzebin"
+                        name = "Andrey Zabebenin"
+                        email = "andrey.zebin@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "https://github.com/andreyzebin/java-bash.git"
+                    developerConnection = "https://github.com/andreyzebin/java-bash.git"
+                    url = "https://github.com/andreyzebin/java-bash"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            val releasesRepoUrl = uri(layout.buildDirectory.dir("repos/releases"))
+            val snapshotsRepoUrl = uri(layout.buildDirectory.dir("repos/snapshots"))
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
+}
+
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     }
 }
