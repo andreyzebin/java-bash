@@ -1,6 +1,8 @@
-package io.github.zebin.javabash.frontend.brush;
+package io.github.zebin.javabash.frontend;
 
-import io.github.zebin.javabash.frontend.TerminalBrushedProxy;
+import io.github.zebin.javabash.frontend.brush.TerminalPalette;
+import io.github.zebin.javabash.frontend.brush.TextBrush;
+import io.github.zebin.javabash.frontend.brush.TextShrink;
 import lombok.Builder;
 import lombok.Data;
 import lombok.With;
@@ -10,24 +12,24 @@ import java.util.function.Function;
 @Builder
 @Data
 @With
-public class TerminalBrushConfigs {
+public class FunnyTerminalConfigs {
 
-    public static final TerminalBrushConfigs DEFAULT = getDefault();
+    public static final FunnyTerminalConfigs DEFAULT = getDefault();
 
-    public static TerminalBrushConfigs getDefault() {
-        TerminalBrushedProxy.ColorPool defaults = TerminalBrushedProxy.ColorPool.defaults();
-        TerminalBrushedProxy.ColorPool defaults2 = TerminalBrushedProxy.ColorPool.defaults();
+    public static FunnyTerminalConfigs getDefault() {
+        FunnyTerminal.ColorPool defaults = FunnyTerminal.ColorPool.defaults();
+        FunnyTerminal.ColorPool defaults2 = FunnyTerminal.ColorPool.defaults();
         return builder()
                 .dir(
                         s -> new TextBrush(TextShrink.getShrinkDir(s, 30))
                                 .fill(defaults2.getColor(TextShrink.getShrinkDir(s, 30)))
                                 .toString()
                 )
-                .stderr(s -> TerminalBrushPresets.stdErrRender(new TextBrush(s)).toString())
-                .stdout(s -> TerminalBrushPresets.stdRender(new TextBrush(s)).toString())
+                .stderr(s -> FunnyTerminalPresets.stdErrRender(new TextBrush(s)).toString())
+                .stdout(s -> FunnyTerminalPresets.stdRender(new TextBrush(s)).toString())
                 .stdin(s -> s)
                 .id(s -> new TextBrush(s).fill(defaults.getColor(s)).toString())
-                .cmd(TerminalBrushPresets::bashRender)
+                .cmd(FunnyTerminalPresets::bashRender)
                 .user(s -> new TextBrush(s).fill(TerminalPalette.MAGENTA).toString())
                 .build();
     }

@@ -1,6 +1,9 @@
-package io.github.zebin.javabash.frontend.brush;
+package io.github.zebin.javabash.frontend;
 
-public class TerminalBrushPresets {
+import io.github.zebin.javabash.frontend.brush.TerminalPalette;
+import io.github.zebin.javabash.frontend.brush.TextBrush;
+
+public class FunnyTerminalPresets {
 
     public static String bashRender(String cmd) {
         return bashHighlights(new TextBrush(cmd)).toString();

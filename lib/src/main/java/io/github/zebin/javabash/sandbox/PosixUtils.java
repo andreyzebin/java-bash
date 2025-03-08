@@ -1,4 +1,4 @@
-package io.github.zebin.javabash;
+package io.github.zebin.javabash.sandbox;
 
 import lombok.extern.slf4j.Slf4j;
 

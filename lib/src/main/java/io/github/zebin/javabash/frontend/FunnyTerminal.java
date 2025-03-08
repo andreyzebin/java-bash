@@ -1,8 +1,7 @@
 package io.github.zebin.javabash.frontend;
 
-import io.github.zebin.javabash.*;
-import io.github.zebin.javabash.frontend.brush.TerminalBrushConfigs;
 import io.github.zebin.javabash.frontend.brush.TerminalPalette;
+import io.github.zebin.javabash.process.TextTerminal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -10,26 +9,21 @@ import java.util.*;
 import java.util.function.Consumer;
 
 @Slf4j
-public class TerminalBrushedProxy implements TextTerminal {
+public class FunnyTerminal implements TextTerminal {
 
     private final TextTerminal delegate;
     private final String rand = UUID.randomUUID().toString().substring(0, 4);
-    private final TerminalBrushConfigs css;
+    private final FunnyTerminalConfigs css;
 
 
-    public TerminalBrushedProxy(TextTerminal delegate, TerminalBrushConfigs css) {
+    public FunnyTerminal(TextTerminal delegate, FunnyTerminalConfigs css) {
         this.delegate = delegate;
         this.css = css;
     }
 
-    public TerminalBrushedProxy(TextTerminal delegate) {
+    public FunnyTerminal(TextTerminal delegate) {
         this.delegate = delegate;
-        this.css = TerminalBrushConfigs.DEFAULT;
-    }
-
-    @Override
-    public void setTimeoutMillis(long timeoutMillis) {
-        delegate.setTimeoutMillis(timeoutMillis);
+        this.css = FunnyTerminalConfigs.DEFAULT;
     }
 
     @Override

@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.zebin.javabash.frontend.brush.TextBrush;
 import io.github.zebin.javabash.frontend.brush.TerminalPalette;
-import io.github.zebin.javabash.frontend.TerminalBrushedProxy;
-import io.github.zebin.javabash.frontend.brush.TerminalBrushConfigs;
+import io.github.zebin.javabash.frontend.FunnyTerminal;
+import io.github.zebin.javabash.frontend.FunnyTerminalConfigs;
+import io.github.zebin.javabash.process.TerminalProcess;
+import io.github.zebin.javabash.process.TextTerminal;
+import io.github.zebin.javabash.sandbox.PosixUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
@@ -23,10 +26,14 @@ class CommonUseTest {
     @Test
     void exec() {
 
-        final TextTerminal bashState = new TerminalBrushedProxy(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())));
-        final TextTerminal bashState2 = new TerminalBrushedProxy(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())),
-                TerminalBrushConfigs.DEFAULT
-                        .withDir(s -> new TextBrush(s).fill(TerminalPalette.CYAN).toString()));
+        final TextTerminal bashState = new FunnyTerminal(
+                new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime()))
+        );
+        final TextTerminal bashState2 = new FunnyTerminal(
+                new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())),
+                FunnyTerminalConfigs.DEFAULT
+                        .withDir(s -> new TextBrush(s).fill(TerminalPalette.CYAN).toString())
+        );
         StringBuilder sb = new StringBuilder();
 
         bashState.exec("echo abc", sb::append, sb::append);
@@ -53,7 +60,7 @@ class CommonUseTest {
 
     @Test
     void test() throws JsonProcessingException {
-        TextTerminal t = new TerminalBrushedProxy(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())));
+        TextTerminal t = new FunnyTerminal(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())));
 
         String eval = t.eval(
                 "curl -s https://raw.githubusercontent.com/spdx/license-list-data/main/json/licenses.json");

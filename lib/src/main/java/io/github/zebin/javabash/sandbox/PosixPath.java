@@ -1,4 +1,4 @@
-package io.github.zebin.javabash;
+package io.github.zebin.javabash.sandbox;
 
 import java.io.File;
 import java.nio.file.Path;
