@@ -32,11 +32,24 @@ public interface TextTerminal {
         return stringBuilder.toString().lines().collect(Collectors.joining(System.lineSeparator()));
     }
 
-    default void secret(String key, String value) {
-        eval(String.format("%s=%s", key, value), String.format("%s=***", key));
+    private static void openSecret(TextTerminal bash, String key, String value) {
+        bash.eval(String.format("%s=%s", key, value), String.format("%s=***", key));
     }
 
-    static <T> T transactionalDir(TextTerminal bash, Supplier<T> result) {
+    private static void closeSecret(TextTerminal bash, String key) {
+        bash.eval(String.format("%s=''", key), String.format("%s=''", key));
+    }
+
+    static <T> T withSecret(TextTerminal bash, String key, String value, Supplier<T> result) {
+        try {
+            openSecret(bash, key, value);
+            return result.get();
+        } finally {
+            closeSecret(bash, key);
+        }
+    }
+
+    static <T> T lockDir(TextTerminal bash, Supplier<T> result) {
         String pwd = bash.eval("pwd");
         try {
             return result.get();
@@ -45,12 +58,10 @@ public interface TextTerminal {
         }
     }
 
-    static void transactionalDir(TextTerminal bash, Runnable action) {
-        String pwd = bash.eval("pwd");
-        try {
+    static void lockDir(TextTerminal bash, Runnable action) {
+        lockDir(bash, () -> {
             action.run();
-        } finally {
-            bash.eval("cd " + pwd);
-        }
+            return 0;
+        });
     }
 }
