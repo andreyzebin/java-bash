@@ -91,11 +91,15 @@ public class PosixPath implements Iterable<PosixPath> {
         if (posix.startsWith("/")) {
             return PosixPath.root().climb(
                     Arrays.stream(posix.split("/")).skip(1)
+                            .filter(s -> !s.isBlank())
                             .toArray(String[]::new)
             );
         }
 
-        return PosixPath.relate().climb(posix.split("/"));
+        return PosixPath.relate().climb(
+                Arrays.stream(posix.split("/"))
+                        .filter(s -> !s.isBlank())
+                        .toArray(String[]::new));
     }
 
     public boolean startsWith(PosixPath pp) {
