@@ -1,6 +1,6 @@
-package io.github.zebin.javabash.frontend;
+package io.github.zebin.javabash.frontend.brush;
 
-public class BashCSS {
+public class TerminalBrushPresets {
 
     public static String bashRender(String cmd) {
         return bashHighlights(new TextBrush(cmd)).toString();
@@ -21,35 +21,35 @@ public class BashCSS {
                 "git commit",
                 "git "}
         ) {
-            bashTML.paint(f, Palette.YELLOW_BOLD);
+            bashTML.paint(f, TerminalPalette.YELLOW_BOLD);
         }
 
-        bashTML.fillSurrounding("\"", Palette.MAGENTA);
+        bashTML.fillSurrounding("\"", TerminalPalette.MAGENTA);
 
         for (String f : new String[]{
                 "\""}
         ) {
-            bashTML.paint(f, Palette.RED_BRIGHT);
+            bashTML.paint(f, TerminalPalette.RED_BRIGHT);
         }
 
         for (String f : new String[]{
                 "false",
                 "true"}
         ) {
-            bashTML.paint(f, Palette.GREEN_BRIGHT);
+            bashTML.paint(f, TerminalPalette.GREEN_BRIGHT);
         }
 
         return bashTML;
     }
 
     public static TextBrush stdRender(TextBrush bashTML) {
-        return bashTML.fill(Palette.GREEN);
+        return bashTML.fill(TerminalPalette.GREEN);
     }
 
     public static TextBrush stdErrRender(TextBrush textBrush) {
         return textBrush
-                .fill(Palette.RED)
-                .paint("ERROR", Palette.RED_BOLD_BRIGHT)
-                .paint("FAIL", Palette.RED_BOLD_BRIGHT);
+                .fill(TerminalPalette.RED)
+                .paint("ERROR", TerminalPalette.RED_BOLD_BRIGHT)
+                .paint("FAIL", TerminalPalette.RED_BOLD_BRIGHT);
     }
 }

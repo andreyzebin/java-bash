@@ -1,4 +1,4 @@
-package io.github.zebin.javabash.frontend;
+package io.github.zebin.javabash.frontend.brush;
 
 import java.util.ArrayList;
 import java.util.HashMap;

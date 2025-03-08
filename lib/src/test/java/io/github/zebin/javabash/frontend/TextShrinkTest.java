@@ -1,5 +1,6 @@
 package io.github.zebin.javabash.frontend;
 
+import io.github.zebin.javabash.frontend.brush.TextShrink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

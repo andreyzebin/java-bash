@@ -1,4 +1,7 @@
-package io.github.zebin.javabash.frontend;
+package io.github.zebin.javabash.frontend.brush;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -115,8 +118,16 @@ public class TextBrush {
     @Override
     public String toString() {
         return blocks.stream()
-                .map(cWord -> cWord.getColor() != null ? cWord.getColor() + cWord.getText() + Palette.RESET
+                .map(cWord -> cWord.getColor() != null ? cWord.getColor() + cWord.getText() + TerminalPalette.RESET
                         : cWord.getText())
                 .collect(Collectors.joining());
+    }
+
+    @AllArgsConstructor
+    @Data
+    public static class ColouredBlock {
+
+        private String text;
+        private Object color;
     }
 }

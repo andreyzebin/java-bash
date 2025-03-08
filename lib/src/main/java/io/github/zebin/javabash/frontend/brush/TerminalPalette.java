@@ -1,6 +1,6 @@
-package io.github.zebin.javabash.frontend;
+package io.github.zebin.javabash.frontend.brush;
 
-public enum Palette {
+public enum TerminalPalette {
     //Color end string, color reset
     RESET("\033[0m"),
 
@@ -76,7 +76,7 @@ public enum Palette {
 
     private final String code;
 
-    Palette(String code) {
+    TerminalPalette(String code) {
         this.code = code;
     }
 

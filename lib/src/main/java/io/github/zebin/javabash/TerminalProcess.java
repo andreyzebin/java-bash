@@ -1,6 +1,6 @@
 package io.github.zebin.javabash;
 
-import io.github.zebin.javabash.frontend.TextTerminalBrushedProxy;
+import io.github.zebin.javabash.frontend.TerminalBrushedProxy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -80,14 +80,14 @@ public class TerminalProcess implements TextTerminal {
                     matched = pull(
                             buffer,
                             fin,
-                            TextTerminalBrushedProxy.fork(wr, (fu) -> writtenOut.set(true)),
+                            TerminalBrushedProxy.fork(wr, (fu) -> writtenOut.set(true)),
                             out,
                             matched
                     );
                     log.trace("Pulling stderr...");
                     pullErr(
                             buffer,
-                            TextTerminalBrushedProxy.fork(stderr, (fu) -> writtenErr.set(true)),
+                            TerminalBrushedProxy.fork(stderr, (fu) -> writtenErr.set(true)),
                             err
                     );
 
