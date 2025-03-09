@@ -5,6 +5,7 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.13/userguide/building_java_projects.html in the Gradle documentation.
  */
 import org.gradle.api.tasks.bundling.Jar
+
 buildscript {
     repositories {
         mavenCentral()
@@ -74,7 +75,7 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
 
     testLogging {
-        events ("standardOut", "started", "passed", "skipped", "failed")
+        events("standardOut", "started", "passed", "skipped", "failed")
     }
 }
 
@@ -135,7 +136,6 @@ tasks.register("printEnvVariables") {
 signing {
     val signingKey: String? by project
     val signingPassword: String? by project
-    println("using signing key: $signingKey")
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
@@ -144,4 +144,11 @@ tasks.javadoc {
     if (JavaVersion.current().isJava9Compatible) {
         (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     }
+}
+
+tasks.register<Zip>("packageDistribution") {
+    archiveFileName = "my-distribution.zip"
+    destinationDirectory = layout.buildDirectory.dir("dist")
+
+    from(layout.buildDirectory.dir("repos/releases"))
 }
