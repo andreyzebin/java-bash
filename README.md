@@ -1,12 +1,18 @@
 # java-bash
 Run commands in bash terminal session
-
+pkg:maven/io.github.andreyzebin/json-bash@0.0.1
 
 ```
 ./gradlew clean test
+
+./gradlew build
+./gradlew sign
+./gradlew publishMavenJavaPublicationToMavenRepository
+
 ```
 
 ```
+
 set JAVA_HOME=C:\Path\To\Your\Java\Home   // Windows
 export JAVA_HOME=/path/to/your/java/home  // Mac/Linux
 

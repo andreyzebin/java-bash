@@ -32,6 +32,9 @@ var logbackVersion = "1.5.6"
 var slf4jVersion = "2.0.13"
 var junitVersion = "5.10.1"
 
+// publication
+group = "io.github.andreyzebin"
+version = "0.0.1"
 
 dependencies {
     // Use JUnit Jupiter for testing.
@@ -95,7 +98,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT License"
-                        url = "https://mit-license.org/"
+                        url = "https://opensource.org/licenses/MIT"
                     }
                 }
                 developers {
@@ -130,10 +133,10 @@ tasks.register("printEnvVariables") {
 }
 
 signing {
-    val signingKeyId: String? by project
     val signingKey: String? by project
     val signingPassword: String? by project
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    println("using signing key: $signingKey")
+    useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
