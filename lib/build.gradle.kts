@@ -95,7 +95,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT License"
-                        url = "https://raw.githubusercontent.com/andreyzebin/java-bash/refs/heads/main/LICENSE"
+                        url = "https://mit-license.org/"
                     }
                 }
                 developers {
@@ -123,7 +123,17 @@ publishing {
     }
 }
 
+tasks.register("printEnvVariables") {
+    doLast {
+        println("JAVA_HOME: ${System.getenv("JAVA_HOME")}")
+    }
+}
+
 signing {
+    val signingKeyId: String? by project
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
