@@ -1,9 +1,11 @@
 package io.github.zebin.javabash.sandbox;
 
+import io.github.zebin.javabash.process.TextTerminal;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.function.Supplier;
 
 @Slf4j
 public class PosixUtils {
@@ -107,5 +109,35 @@ public class PosixUtils {
         }
         log.debug("Linux OS is found");
         return runShell(r, "bash");
+    }
+
+    private static void openSecret(TextTerminal bash, String key, String value) {
+        bash.eval(String.format("%s=%s", key, value), String.format("%s=***", key));
+    }
+
+    private static void closeSecret(TextTerminal bash, String key) {
+        bash.eval(String.format("%s=''", key), String.format("%s=''", key));
+    }
+
+    public static <T> T withSecret(
+            TextTerminal bash,
+            String key, String value,
+            Supplier<T> result
+    ) {
+        try {
+            openSecret(bash, key, value);
+            return result.get();
+        } finally {
+            closeSecret(bash, key);
+        }
+    }
+
+    public static <T> T lockDir(TextTerminal bash, Supplier<T> result) {
+        String pwd = bash.eval("pwd");
+        try {
+            return result.get();
+        } finally {
+            bash.eval("cd " + pwd);
+        }
     }
 }

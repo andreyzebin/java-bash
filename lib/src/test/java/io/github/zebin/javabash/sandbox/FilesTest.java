@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 @Slf4j
-class TerminalSandBoxTest {
+class FilesTest {
 
     @Test
     void test() {
-        TerminalSandBox sandBox = new TerminalSandBox(
+        FileManager sandBox = new FileManager(
                 new FunnyTerminal(
                         new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime()))
                 )
