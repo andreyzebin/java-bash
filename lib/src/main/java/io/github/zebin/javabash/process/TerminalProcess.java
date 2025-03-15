@@ -34,8 +34,8 @@ public class TerminalProcess implements TextTerminal {
                 });
     }
 
-    public void setTimeoutMillis(long timeoutMillis) {
-        this.timeoutMillis = timeoutMillis;
+    public void setTimeoutMillis(long timeout) {
+        timeoutMillis = timeout;
     }
 
     @Override

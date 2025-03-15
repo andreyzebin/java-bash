@@ -24,8 +24,10 @@ class TerminalSandBoxTest {
         sandBox.list();
 
         PosixPath tempFolderRel = PosixPath.ofPosix(UUID.randomUUID().toString());
-        PosixPath tempFolderAbs = sandBox.makeDir(tempFolderRel);
+        PosixPath tempFolderAbs = null;
         try {
+            tempFolderAbs = sandBox.makeDir(tempFolderRel);
+
             log.info("Made dir {}", tempFolderAbs);
             sandBox.go(tempFolderAbs);
 
@@ -65,7 +67,9 @@ class TerminalSandBoxTest {
 
         } finally {
             sandBox.goUp();
-            sandBox.remove(tempFolderAbs);
+            if (tempFolderAbs != null) {
+                sandBox.remove(tempFolderAbs);
+            }
         }
 
         log.info("Removed {}", tempFolderAbs);
