@@ -29,7 +29,7 @@ public class FunnyTerminal implements TextTerminal {
     @Override
     public int exec(String comm, String mask, Consumer<String> stdout, Consumer<String> stderr) {
         try (
-                LineWriter errLog = new LineWriter(s -> log.error(css.getStderr().apply(s)));
+                LineWriter errLog = new LineWriter(s -> log.debug(css.getStderr().apply(s)));
                 LineWriter outLog = new LineWriter(s -> log.debug(css.getStdout().apply(s)));
                 LineWriter cmdLog = new LineWriter(s -> log.debug(css.getStdin().apply(s)));
         ) {

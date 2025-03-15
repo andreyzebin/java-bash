@@ -5,9 +5,10 @@ pkg:maven/io.github.andreyzebin/json-bash@0.0.1
 ```
 ./gradlew clean test
 
-./gradlew build
+./gradlew clean build
 ./gradlew sign
 ./gradlew publishMavenJavaPublicationToMavenRepository
+./gradlew packageDistribution
 
 ```
 

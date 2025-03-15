@@ -107,11 +107,13 @@ public class TerminalProcess implements TextTerminal {
         }
     }
 
-    private static int pull(byte[] buffer, String fin, Consumer<String> wr, InputStream out, int matched)
+    private int pull(byte[] buffer, String fin, Consumer<String> wr, InputStream out, int matched)
             throws IOException {
         int no = out.available();
+        log.trace("Available {} bytes", no);
         if (no > 0) {
             int n = out.read(buffer, 0, Math.min(no, buffer.length));
+            log.trace("Read {} bytes", n);
             String bufSeg = new String(buffer, 0, n);
             for (int i = 0; i < bufSeg.length(); i++) {
                 char toFind = fin.charAt(matched);

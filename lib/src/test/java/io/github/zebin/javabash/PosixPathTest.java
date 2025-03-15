@@ -20,6 +20,7 @@ class PosixPathTest {
 
         Assertions.assertEquals(Path.of(""), posixPath.toPath());
         Assertions.assertEquals("", posixPath.toString());
+        Assertions.assertFalse(posixPath.isAbsolute());
     }
 
     @Test
@@ -71,6 +72,7 @@ class PosixPathTest {
 
         Assertions.assertEquals(Path.of(File.separator), posixPath.toPath());
         Assertions.assertEquals("/", posixPath.toString());
+        Assertions.assertTrue(posixPath.isAbsolute());
     }
 
     @Test
@@ -128,7 +130,7 @@ class PosixPathTest {
         );
 
         Assertions.assertEquals(Path.of(""), next.toPath());
-        Assertions.assertTrue(next.isAbsolute());
+        Assertions.assertFalse(next.isAbsolute());
     }
 
     @Test

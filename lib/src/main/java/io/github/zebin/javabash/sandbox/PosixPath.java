@@ -12,6 +12,8 @@ import java.util.stream.StreamSupport;
 
 public class PosixPath implements Iterable<PosixPath> {
 
+    public static final PosixPath CURRENT = ofPosix(".");
+    public static final PosixPath LEVEL_UP = ofPosix("..");
     private final String[] segments;
     private final int start;
     private final int endInclusive;
@@ -65,7 +67,7 @@ public class PosixPath implements Iterable<PosixPath> {
             @Override
             public PosixPath next() {
                 final PosixPath it1 = it;
-                if (it1.hasMore()) {
+                if (it1.hasSegments()) {
                     it = it1.descend();
                 } else {
                     it = null;
@@ -170,12 +172,12 @@ public class PosixPath implements Iterable<PosixPath> {
         return climb(suffix.segments);
     }
 
-    public boolean hasMore() {
+    private boolean hasSegments() {
         return start < endInclusive + 1;
     }
 
     public boolean isAbsolute() {
-        return !hasMore();
+        return isAbsolute;
     }
 
     public Stream<PosixPath> descendStream() {

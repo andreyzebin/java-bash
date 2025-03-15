@@ -58,6 +58,10 @@ class CommonUseTest {
 
     }
 
+    /**
+     * uses Internet
+     * @throws JsonProcessingException
+     */
     @Test
     void test() throws JsonProcessingException {
         TextTerminal t = new FunnyTerminal(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())));
