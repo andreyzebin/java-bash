@@ -1,6 +1,6 @@
 package io.github.zebin.javabash.sandbox;
 
-public interface SandboxContext {
+public interface BashContext {
 
     FileManager openSandbox();
 }
