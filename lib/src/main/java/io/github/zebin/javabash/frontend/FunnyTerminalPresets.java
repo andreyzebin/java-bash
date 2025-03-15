@@ -11,18 +11,24 @@ public class FunnyTerminalPresets {
 
     public static TextBrush bashHighlights(TextBrush bashTML) {
         for (String f : new String[]{
-                "mkdir",
-                "pwd",
-                "rm -rf",
-                "rm",
-                "ssh-add",
+                "mkdir ",
+                "pwd ",
+                "rm ",
+                "ssh-add ",
                 "cd ",
-                "git clone",
-                "git checkout",
-                "git add",
-                "git push",
-                "git commit",
-                "git "}
+                "ls ",
+                "git clone ",
+                "git checkout ",
+                "git add ",
+                "git push ",
+                "git commit ",
+                "git ",
+                "if ",
+                " fi",
+                "then ",
+                "else ",
+                "echo ",
+                "touch "}
         ) {
             bashTML.paint(f, TerminalPalette.YELLOW_BOLD);
         }

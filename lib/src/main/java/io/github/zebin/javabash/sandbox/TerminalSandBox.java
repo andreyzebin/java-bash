@@ -51,7 +51,7 @@ public class TerminalSandBox {
     }
 
     public boolean dirExists(PosixPath newDir) {
-        return delegate.eval(String.format("if [ -d %s ]; then echo \"YES\"; fi", newDir))
+        return delegate.eval(String.format("if [ -d %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
                 .contains("YES");
     }
 
@@ -60,7 +60,7 @@ public class TerminalSandBox {
     }
 
     public boolean fileExists(PosixPath newDir) {
-        return delegate.eval(String.format("if [ -f %s ]; then echo \"YES\"; fi", newDir))
+        return delegate.eval(String.format("if [ -f %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
                 .contains("YES");
     }
 
@@ -79,7 +79,7 @@ public class TerminalSandBox {
 
     public PosixPath remove(PosixPath path) {
         if (!exists(path)) {
-            throw new IllegalArgumentException(String.format("Not exist %s", path));
+            throw new IllegalArgumentException(String.format("Cannot remove, because object is missing %s", path));
         }
         if (isFolder(path)) {
             return removeDir(path);

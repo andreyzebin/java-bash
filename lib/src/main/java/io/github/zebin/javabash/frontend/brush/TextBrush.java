@@ -26,8 +26,10 @@ public class TextBrush {
                                     , new ColouredBlock(word, c)
                             );
 
-                            ColouredBlock last = lastOf(colouredWords);
-                            last.setText(last.getText().substring(0, last.getText().length() - 1));
+                            if (!colouredWords.isEmpty()) {
+                                ColouredBlock last = lastOf(colouredWords);
+                                last.setText(last.getText().substring(0, last.getText().length() - 1));
+                            }
                             colouredWords = colouredWords.stream().filter(cW -> !cW.getText().isEmpty())
                                     .toList();
 
