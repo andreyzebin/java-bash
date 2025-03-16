@@ -9,7 +9,7 @@ import io.github.zebin.javabash.frontend.FunnyTerminal;
 import io.github.zebin.javabash.frontend.FunnyTerminalConfigs;
 import io.github.zebin.javabash.process.TerminalProcess;
 import io.github.zebin.javabash.process.TextTerminal;
-import io.github.zebin.javabash.sandbox.PosixUtils;
+import io.github.zebin.javabash.sandbox.BashUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
@@ -27,10 +27,10 @@ class CommonUseTest {
     void exec() {
 
         final TextTerminal bashState = new FunnyTerminal(
-                new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime()))
+                new TerminalProcess(BashUtils.runShellForOs(Runtime.getRuntime()))
         );
         final TextTerminal bashState2 = new FunnyTerminal(
-                new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())),
+                new TerminalProcess(BashUtils.runShellForOs(Runtime.getRuntime())),
                 FunnyTerminalConfigs.DEFAULT
                         .withDir(s -> new TextBrush(s).fill(TerminalPalette.CYAN).toString())
         );
@@ -60,7 +60,7 @@ class CommonUseTest {
 
     @Test
     void test() throws JsonProcessingException {
-        TextTerminal t = new FunnyTerminal(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())));
+        TextTerminal t = new FunnyTerminal(new TerminalProcess(BashUtils.runShellForOs(Runtime.getRuntime())));
 
         UUID jsonTempFile = UUID.randomUUID();
         try {

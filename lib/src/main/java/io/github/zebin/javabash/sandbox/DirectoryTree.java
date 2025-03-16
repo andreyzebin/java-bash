@@ -1,5 +1,7 @@
 package io.github.zebin.javabash.sandbox;
 
+import jdk.jfr.Experimental;
+
 import java.io.Reader;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,7 +17,7 @@ import java.util.stream.Stream;
  * <p>
  * Use {@link #validate(PosixPath)} in implementation
  */
-public interface SandboxFiles {
+public interface DirectoryTree {
 
     default void validate(PosixPath path) {
         if (path.isAbsolute()) {

@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 
 @Slf4j
-public class PosixUtils {
+public class BashUtils {
 
     public static final String WIN_BASH_PATH = "C:\\Program Files\\Git\\bin\\bash.exe";
 

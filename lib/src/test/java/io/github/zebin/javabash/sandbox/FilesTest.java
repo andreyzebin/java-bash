@@ -15,7 +15,7 @@ class FilesTest {
     void test() {
         FileManager sandBox = new FileManager(
                 new FunnyTerminal(
-                        new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime()))
+                        new TerminalProcess(BashUtils.runShellForOs(Runtime.getRuntime()))
                 )
         );
 

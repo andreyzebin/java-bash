@@ -1,6 +1,7 @@
 package io.github.zebin.javabash.sandbox;
 
 import io.github.zebin.javabash.process.TextTerminal;
+import jdk.jfr.Experimental;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class FileManager {
         return new StringWriter() {
             @Override
             public void close() throws IOException {
-                delegate.eval(String.format("echo %s > %s", PosixUtils.escape(toString()), pp));
+                delegate.eval(String.format("echo %s > %s", BashUtils.escape(toString()), pp));
                 super.close();
             }
         };
@@ -54,7 +55,7 @@ public class FileManager {
         return new StringWriter() {
             @Override
             public void close() throws IOException {
-                delegate.eval(String.format("echo %s >> %s", PosixUtils.escape(toString()), pp));
+                delegate.eval(String.format("echo %s >> %s", BashUtils.escape(toString()), pp));
                 super.close();
             }
         };

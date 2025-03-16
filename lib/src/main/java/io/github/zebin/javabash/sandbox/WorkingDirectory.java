@@ -1,16 +1,18 @@
 package io.github.zebin.javabash.sandbox;
 
+import jdk.jfr.Experimental;
+
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class SandboxFilesImpl implements SandboxFiles {
+public class WorkingDirectory implements DirectoryTree {
 
     private final FileManager delegate;
 
-    public SandboxFilesImpl(FileManager delegate) {
+    public WorkingDirectory(FileManager delegate) {
         this.delegate = delegate;
     }
 

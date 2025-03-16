@@ -19,20 +19,20 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-class SandboxFilesImplTest {
+class WorkingDirectoryTest {
     @Test
     void test() throws IOException {
         FileManager sandBox = new FileManager(
                 new FunnyTerminal(
-                        new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime()))
+                        new TerminalProcess(BashUtils.runShellForOs(Runtime.getRuntime()))
                 )
         );
         sandBox.goUp();
 
-        SandboxFilesImpl sandboxFilesImpl = new SandboxFilesImpl(sandBox);
+        WorkingDirectory workingDirectory = new WorkingDirectory(sandBox);
         List<PosixPath> found = new LinkedList<>();
 
-        sandboxFilesImpl.traverse(
+        workingDirectory.traverse(
                 PosixPath.ofPosix(""),
                 f -> {
                     return !f.endsWith(PosixPath.ofPosix(".git")) &&
@@ -51,14 +51,14 @@ class SandboxFilesImplTest {
         found.forEach(f -> log.info(f.toString()));
 
         PosixPath rand = PosixPath.ofPosix(UUID.randomUUID().toString());
-        try (Writer v = sandboxFilesImpl.put(rand);) {
+        try (Writer v = workingDirectory.put(rand);) {
             v.write("""
                     {
                     "foo": "bar"
                     }
                     """);
         }
-        try (Reader reader = sandboxFilesImpl.get(rand);) {
+        try (Reader reader = workingDirectory.get(rand);) {
             ObjectMapper objectMapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             FooBar fooBar = objectMapper.readValue(reader, FooBar.class);
@@ -66,19 +66,19 @@ class SandboxFilesImplTest {
             Assertions.assertEquals(FooBar.builder().foo("bar").build(), fooBar);
 
         }
-        sandboxFilesImpl.delete(rand);
+        workingDirectory.delete(rand);
 
 
         PosixPath rand2 = PosixPath.ofPosix(UUID.randomUUID().toString());
-        try (Writer v = sandboxFilesImpl.put(rand2);) {
+        try (Writer v = workingDirectory.put(rand2);) {
             v.write("line1;");
         }
 
-        try (Writer v = sandboxFilesImpl.patch(rand2);) {
+        try (Writer v = workingDirectory.patch(rand2);) {
             v.write("line2;");
         }
 
-        try (Reader reader = sandboxFilesImpl.get(rand2);) {
+        try (Reader reader = workingDirectory.get(rand2);) {
             char[] arr = new char[8 * 1024];
             StringBuilder buffer = new StringBuilder();
             int numCharsRead;
@@ -91,7 +91,7 @@ class SandboxFilesImplTest {
                             line2;""", buffer.toString());
 
         }
-        sandboxFilesImpl.delete(rand2);
+        workingDirectory.delete(rand2);
 
     }
 
