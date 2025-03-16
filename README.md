@@ -38,7 +38,7 @@ export ORG_GRADLE_PROJECT_signingPassword='Hi, world'
 
 
 ## docker archlinux with ssh
-https://balaskas.gr/wiki/Dockerfile/archlinux/openssh
+Based on: https://balaskas.gr/wiki/Dockerfile/archlinux/openssh
 
 
 ```bash
