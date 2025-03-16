@@ -35,3 +35,14 @@ export ORG_GRADLE_PROJECT_signingPassword='Hi, world'
 ```
 
 [![Gradle Package](https://github.com/andreyzebin/java-bash/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/andreyzebin/java-bash/actions/workflows/gradle-publish.yml)
+
+
+## docker archlinux with ssh
+https://balaskas.gr/wiki/Dockerfile/archlinux/openssh
+
+
+```bash
+docker build -t archlinux:sshd .
+docker run -d -p 2222:22 archlinux:sshd
+ssh localhost -p 2222 -l root 
+```
