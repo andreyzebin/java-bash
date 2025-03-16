@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -58,28 +59,38 @@ class CommonUseTest {
 
     }
 
-    /**
-     * uses Internet
-     * @throws JsonProcessingException
-     */
     @Test
     void test() throws JsonProcessingException {
         TextTerminal t = new FunnyTerminal(new TerminalProcess(PosixUtils.runShellForOs(Runtime.getRuntime())));
 
-        String eval = t.eval(
-                "curl -s https://raw.githubusercontent.com/spdx/license-list-data/main/json/licenses.json");
+        UUID jsonTempFile = UUID.randomUUID();
+        try {
+            t.eval(String.format("touch %s", jsonTempFile));
+            t.eval(String.format("echo '{ \"foo\":\"bar\" }' > %s", jsonTempFile));
+            t.eval(String.format("curl -s -H \"Content-Type: application/json\" " +
+                            "--data @%s " +
+                            "-X PUT http://localhost:4000/dir1/f", jsonTempFile)
+            );
 
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.readValue(eval, Licenses.class);
+            String eval = t.eval("curl -s http://localhost:4000/dir1/f");
+
+            ObjectMapper objectMapper = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            FooBar fooBar = objectMapper.readValue(eval, FooBar.class);
+
+            Assertions.assertEquals(FooBar.builder().foo("bar").build(), fooBar);
+        } finally {
+            t.eval(String.format("rm %s", jsonTempFile));
+        }
+
     }
 
     @Builder
     @Jacksonized
     @Data
-    public static class Licenses {
+    public static class FooBar {
 
-        private List<Object> licenses;
+        private String foo;
 
     }
 }

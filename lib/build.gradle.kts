@@ -35,7 +35,7 @@ var junitVersion = "5.10.1"
 
 // publication
 group = "io.github.andreyzebin"
-version = "0.0.1"
+version = "1.0.0"
 
 dependencies {
     // Use JUnit Jupiter for testing.
@@ -147,7 +147,7 @@ tasks.javadoc {
 }
 
 tasks.register<Zip>("packageDistribution") {
-    archiveFileName = "my-distribution.zip"
+    archiveFileName = "json-bash-${version}.zip"
     destinationDirectory = layout.buildDirectory.dir("dist")
 
     from(layout.buildDirectory.dir("repos/releases"))

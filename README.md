@@ -1,6 +1,6 @@
 # java-bash
 Run commands in bash terminal session
-pkg:maven/io.github.andreyzebin/json-bash@0.0.1
+pkg:maven/io.github.andreyzebin/json-bash@1.0.0
 
 ```
 ./gradlew clean test
@@ -42,7 +42,15 @@ Based on: https://balaskas.gr/wiki/Dockerfile/archlinux/openssh
 
 
 ```bash
+cd test-environment/arch-ssh
 docker build -t archlinux:sshd .
 docker run -d -p 2222:22 archlinux:sshd
 ssh localhost -p 2222 -l root 
+```
+
+## docker file-server
+
+```bash
+cd test-environment/file-server
+docker compose up --detach
 ```
