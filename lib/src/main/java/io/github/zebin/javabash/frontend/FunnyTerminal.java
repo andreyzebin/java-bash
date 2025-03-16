@@ -1,6 +1,5 @@
 package io.github.zebin.javabash.frontend;
 
-import io.github.zebin.javabash.frontend.brush.TerminalPalette;
 import io.github.zebin.javabash.process.TextTerminal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -29,9 +28,9 @@ public class FunnyTerminal implements TextTerminal {
     @Override
     public int exec(String comm, String mask, Consumer<String> stdout, Consumer<String> stderr) {
         try (
-                LineWriter errLog = new LineWriter(s -> log.debug(css.getStderr().apply(s)));
-                LineWriter outLog = new LineWriter(s -> log.debug(css.getStdout().apply(s)));
-                LineWriter cmdLog = new LineWriter(s -> log.debug(css.getStdin().apply(s)));
+                TextWriter errLog = new TextWriter(s -> log.debug(css.getStderr().apply(s)));
+                TextWriter outLog = new TextWriter(s -> log.debug(css.getStdout().apply(s)));
+                TextWriter cmdLog = new TextWriter(s -> log.debug(css.getStdin().apply(s)));
         ) {
 
             String pwd = delegate.eval("pwd");

@@ -38,7 +38,7 @@ public class PosixUtils {
     }
 
     public static String escape(String posix) {
-        return "\"" + posix + "\"";
+        return "\"" + posix.replace("\"", "\\\"") + "\"";
     }
 
     public static String escape(PosixPath posix) {

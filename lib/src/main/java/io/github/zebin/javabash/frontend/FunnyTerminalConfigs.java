@@ -1,8 +1,5 @@
 package io.github.zebin.javabash.frontend;
 
-import io.github.zebin.javabash.frontend.brush.TerminalPalette;
-import io.github.zebin.javabash.frontend.brush.TextBrush;
-import io.github.zebin.javabash.frontend.brush.TextShrink;
 import lombok.Builder;
 import lombok.Data;
 import lombok.With;

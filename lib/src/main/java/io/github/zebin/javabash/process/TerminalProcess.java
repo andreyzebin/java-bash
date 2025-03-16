@@ -19,6 +19,7 @@ public class TerminalProcess implements TextTerminal {
     private final PrintWriter pw;
     private final String fin = UUID.randomUUID().toString().substring(0, 8);
     private long timeoutMillis = 1800_000; // 30 minutes
+    private int relaxTimeMillis = 1;
 
     public TerminalProcess(Process process) {
         this.process = process;
@@ -36,6 +37,10 @@ public class TerminalProcess implements TextTerminal {
 
     public void setTimeoutMillis(long timeout) {
         timeoutMillis = timeout;
+    }
+
+    public void setRelaxTimeMillis(int relax) {
+        relaxTimeMillis = relax;
     }
 
     @Override
@@ -97,9 +102,11 @@ public class TerminalProcess implements TextTerminal {
                     }
                 }
 
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
+                if (isAlive(process) && !isFinished) {
+                    try {
+                        Thread.sleep(relaxTimeMillis);
+                    } catch (InterruptedException e) {
+                    }
                 }
             }
         } catch (IOException e) {

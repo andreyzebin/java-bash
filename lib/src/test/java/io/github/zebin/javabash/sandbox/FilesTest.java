@@ -48,22 +48,26 @@ class FilesTest {
             Assertions.assertTrue(sandBox.exists(newFolderAbsolute));
 
             // file is not a folder
-            Assertions.assertFalse(sandBox.isFolder(newFileRelative));
+            Assertions.assertFalse(sandBox.dirExists(newFileRelative));
             // non-existing path is not a folder
-            Assertions.assertFalse(sandBox.isFolder(PosixPath.ofPosix("non-existing-path")));
+            Assertions.assertFalse(sandBox.dirExists(PosixPath.ofPosix("non-existing-path")));
             // folder is folder
-            Assertions.assertTrue(sandBox.isFolder(newFolderRel));
+            Assertions.assertTrue(sandBox.dirExists(newFolderRel));
             // . == local directory is a folder
-            Assertions.assertTrue(sandBox.isFolder(PosixPath.CURRENT));
+            Assertions.assertTrue(sandBox.dirExists(PosixPath.CURRENT));
 
             // file is file
-            Assertions.assertTrue(sandBox.isFile(newFileRelative));
+            Assertions.assertTrue(sandBox.fileExists(newFileRelative));
             // non existing file is not a file
-            Assertions.assertFalse(sandBox.isFile(PosixPath.ofPosix("non-existing-file")));
+            Assertions.assertFalse(sandBox.fileExists(PosixPath.ofPosix("non-existing-file")));
             // folder is not a file
-            Assertions.assertFalse(sandBox.isFile(newFolderRel));
+            Assertions.assertFalse(sandBox.fileExists(newFolderRel));
             // . == local directory is not a file
-            Assertions.assertFalse(sandBox.isFile(PosixPath.CURRENT));
+            Assertions.assertFalse(sandBox.fileExists(PosixPath.CURRENT));
+
+            Assertions.assertFalse(sandBox.remove(PosixPath.ofPosix("non-existing-file")));
+            Assertions.assertTrue(sandBox.remove(newFileRelative));
+            Assertions.assertTrue(sandBox.remove(newFolderRel));
 
         } finally {
             sandBox.goUp();

@@ -2,12 +2,12 @@ package io.github.zebin.javabash.frontend;
 
 import java.util.function.Consumer;
 
-public class LineWriter implements AutoCloseable {
+public class TextWriter implements AutoCloseable {
 
     private final StringBuilder sb = new StringBuilder();
     private final Consumer<String> lines;
 
-    public LineWriter(Consumer<String> lines) {
+    public TextWriter(Consumer<String> lines) {
         this.lines = lines;
     }
 

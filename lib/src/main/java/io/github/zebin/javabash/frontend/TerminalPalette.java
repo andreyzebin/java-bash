@@ -1,4 +1,4 @@
-package io.github.zebin.javabash.frontend.brush;
+package io.github.zebin.javabash.frontend;
 
 public enum TerminalPalette {
     //Color end string, color reset

@@ -1,7 +1,5 @@
 package io.github.zebin.javabash.frontend;
 
-import io.github.zebin.javabash.frontend.brush.TerminalPalette;
-import io.github.zebin.javabash.frontend.brush.TextBrush;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

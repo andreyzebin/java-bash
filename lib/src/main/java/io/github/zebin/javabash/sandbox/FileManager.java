@@ -1,10 +1,16 @@
 package io.github.zebin.javabash.sandbox;
 
 import io.github.zebin.javabash.process.TextTerminal;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class FileManager {
 
     private final TextTerminal delegate;
@@ -18,7 +24,7 @@ public class FileManager {
     }
 
     public PosixPath goUp() {
-            return go(PosixPath.LEVEL_UP);
+        return go(PosixPath.LEVEL_UP);
     }
 
     public PosixPath go(PosixPath path) {
@@ -26,8 +32,32 @@ public class FileManager {
         return getCurrent();
     }
 
+    public int run(String comm, Consumer<String> stdout, Consumer<String> stderr) {
+        return delegate.exec(comm, stdout, stderr);
+    }
+
     public String read(PosixPath pp) {
         return delegate.eval(String.format("cat %s", pp));
+    }
+
+    public Writer write(PosixPath pp) {
+        return new StringWriter() {
+            @Override
+            public void close() throws IOException {
+                delegate.eval(String.format("echo %s > %s", PosixUtils.escape(toString()), pp));
+                super.close();
+            }
+        };
+    }
+
+    public Writer append(PosixPath pp) {
+        return new StringWriter() {
+            @Override
+            public void close() throws IOException {
+                delegate.eval(String.format("echo %s >> %s", PosixUtils.escape(toString()), pp));
+                super.close();
+            }
+        };
     }
 
     public PosixPath makeFile(PosixPath newDir) {
@@ -40,8 +70,8 @@ public class FileManager {
     }
 
     public List<PosixPath> list(PosixPath path) {
-        String eval = delegate.eval(String.format("ls -a %s", path));
-        return eval.lines().map(PosixPath::ofPosix).collect(Collectors.toList());
+        String eval = delegate.eval(String.format("ls -A %s", path));
+        return eval.lines().map(path::climb).collect(Collectors.toList());
     }
 
     public PosixPath makeDir(PosixPath newDir) {
@@ -63,41 +93,29 @@ public class FileManager {
                 .contains("YES");
     }
 
-    public boolean isFolder(PosixPath newDir) {
-        return dirExists(newDir);
+    public boolean removeDir(PosixPath newDir) {
+        String eval = delegate.eval(String.format("rm -vrf %s", newDir));
+        return eval.lines().findAny().isPresent();
     }
 
-    public boolean isFile(PosixPath newDir) {
-        return exists(newDir) && !isFolder(newDir);
-    }
-
-    public PosixPath removeDir(PosixPath newDir) {
-        delegate.eval(String.format("rm -rf %s", newDir));
-        return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
-    }
-
-    public PosixPath remove(PosixPath path) {
-        if (!exists(path)) {
-            throw new IllegalArgumentException(String.format("Cannot remove, because object is missing %s", path));
-        }
-        if (isFolder(path)) {
+    public boolean remove(PosixPath path) {
+        if (dirExists(path)) {
             return removeDir(path);
         }
-        if (isFile(path)) {
-            return removeFile(path);
-        }
 
-        throw new IllegalArgumentException(String.format("Unknown object %s", path));
+        return removeFile(path);
     }
 
-    public PosixPath removeFile(PosixPath newDir) {
-        if (isFolder(newDir)) {
-            throw new IllegalArgumentException(
-                    String.format("Wanted to remove file %s, while actually it is a folder!", newDir)
-            );
+    public boolean removeFile(PosixPath file) {
+        StringBuilder err = new StringBuilder();
+        StringBuilder std = new StringBuilder();
+        int eval = delegate.exec(String.format("rm -vf %s", file), std::append, err::append);
+        if (eval != 0) {
+            throw new RuntimeException(String.format("Could not remove file %s, because %s", file, err));
         }
-        delegate.eval(String.format("rm %s", newDir));
-        return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
+
+        return std.toString().lines().findAny().isPresent();
     }
+
 
 }

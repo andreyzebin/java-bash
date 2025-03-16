@@ -1,4 +1,4 @@
-package io.github.zebin.javabash.frontend.brush;
+package io.github.zebin.javabash.frontend;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

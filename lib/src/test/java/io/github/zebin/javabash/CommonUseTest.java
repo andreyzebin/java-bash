@@ -3,8 +3,8 @@ package io.github.zebin.javabash;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.zebin.javabash.frontend.brush.TextBrush;
-import io.github.zebin.javabash.frontend.brush.TerminalPalette;
+import io.github.zebin.javabash.frontend.TextBrush;
+import io.github.zebin.javabash.frontend.TerminalPalette;
 import io.github.zebin.javabash.frontend.FunnyTerminal;
 import io.github.zebin.javabash.frontend.FunnyTerminalConfigs;
 import io.github.zebin.javabash.process.TerminalProcess;
@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
