@@ -20,7 +20,9 @@ RUN  sed -i -e 's/UsePAM no/UsePAM yes/' /etc/ssh/sshd_config
 RUN  sed -i -e 's/#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config
 RUN  sed -i -e 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
+# uncomment PermitRootLogin
 RUN  sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
+# change PermitRootLogin prohibit-password to PermitRootLogin yes
 RUN  sed -i -e 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # Expose tcp port
