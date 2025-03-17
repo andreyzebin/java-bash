@@ -89,6 +89,13 @@ public class PosixPath implements Iterable<PosixPath> {
         return new PosixPath(start, endInclusive - 1, isAbsolute, segments);
     }
 
+    public String getEnd() {
+        if (length() > 0) {
+            return segments[endInclusive];
+        }
+        return null;
+    }
+
     public static PosixPath ofPosix(String posix) {
         if (posix.startsWith("/")) {
             return PosixPath.root().climb(

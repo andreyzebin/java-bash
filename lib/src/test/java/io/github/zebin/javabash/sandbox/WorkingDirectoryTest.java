@@ -69,7 +69,7 @@ class WorkingDirectoryTest {
         workingDirectory.delete(rand);
 
 
-        PosixPath rand2 = PosixPath.ofPosix(UUID.randomUUID().toString());
+        PosixPath rand2 = PosixPath.relate().climb("kk", UUID.randomUUID().toString());
         try (Writer v = workingDirectory.put(rand2);) {
             v.write("line1;");
         }
@@ -92,6 +92,7 @@ class WorkingDirectoryTest {
 
         }
         workingDirectory.delete(rand2);
+        workingDirectory.delete(rand2.descend());
 
     }
 

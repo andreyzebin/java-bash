@@ -1,6 +1,6 @@
 # java-bash
 Run commands in bash terminal session
-pkg:maven/io.github.andreyzebin/json-bash@2.0.0
+pkg:maven/io.github.andreyzebin/json-bash@2.1.0
 
 ```
 ./gradlew clean test
@@ -35,6 +35,8 @@ export ORG_GRADLE_PROJECT_signingPassword='Hi, world'
 ```
 
 [![Gradle Package](https://github.com/andreyzebin/java-bash/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/andreyzebin/java-bash/actions/workflows/gradle-publish.yml)
+
+
 
 
 ## docker archlinux with ssh

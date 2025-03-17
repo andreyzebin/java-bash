@@ -1,7 +1,6 @@
 package io.github.zebin.javabash.sandbox;
 
 import io.github.zebin.javabash.process.TextTerminal;
-import jdk.jfr.Experimental;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -76,7 +75,7 @@ public class FileManager {
     }
 
     public PosixPath makeDir(PosixPath newDir) {
-        delegate.eval(String.format("mkdir %s", newDir));
+        delegate.eval(String.format("mkdir -p %s", newDir));
         return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
     }
 

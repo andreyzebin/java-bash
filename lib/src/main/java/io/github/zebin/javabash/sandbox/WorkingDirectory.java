@@ -1,7 +1,5 @@
 package io.github.zebin.javabash.sandbox;
 
-import jdk.jfr.Experimental;
-
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
@@ -19,6 +17,9 @@ public class WorkingDirectory implements DirectoryTree {
     @Override
     public Writer put(PosixPath path) {
         validate(path);
+        if (path.length() > 1) {
+            delegate.makeDir(path.descend());
+        }
         return delegate.write(path);
     }
 
@@ -31,6 +32,9 @@ public class WorkingDirectory implements DirectoryTree {
     @Override
     public Writer patch(PosixPath path) {
         validate(path);
+        if (path.length() > 1) {
+            delegate.makeDir(path.descend());
+        }
         return delegate.append(path);
     }
 

@@ -47,6 +47,13 @@ class PosixPathTest {
     }
 
     @Test
+    void testEnd() {
+        Assertions.assertEquals("def", PosixPath.ofPosix("/abc/def").getEnd());
+        Assertions.assertEquals("abc", PosixPath.ofPosix("abc/def").descend().getEnd());
+        Assertions.assertNull(PosixPath.ofPosix("abc/def").descend().descend().getEnd());
+    }
+
+    @Test
     void testOfPath() {
         Assertions.assertEquals(
                 "",
