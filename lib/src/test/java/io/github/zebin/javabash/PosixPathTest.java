@@ -1,17 +1,17 @@
 package io.github.zebin.javabash;
 
+import com.google.common.collect.Streams;
 import io.github.zebin.javabash.sandbox.PosixPath;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 class PosixPathTest {
 
     @Test
@@ -24,6 +24,13 @@ class PosixPathTest {
     }
 
     @Test
+    void testContains() {
+        Assertions.assertFalse(
+                PosixPath.ofPosix("/abc/def/hij").contains(PosixPath.ofPosix("def/hij1"))
+        );
+    }
+
+    @Test
     void testStartsWith() {
         Assertions.assertTrue(
                 PosixPath.ofPosix("/abc/def").startsWith(PosixPath.ofPosix("/abc"))
@@ -33,10 +40,33 @@ class PosixPathTest {
         );
 
         Assertions.assertTrue(
+                PosixPath.ofPosix("/abc/def").contains(PosixPath.ofPosix("/abc"))
+        );
+        Assertions.assertFalse(
+                PosixPath.ofPosix("/abc/def").contains(PosixPath.ofPosix("/abc1"))
+        );
+        Assertions.assertTrue(
+                PosixPath.ofPosix("/abc/def").contains(PosixPath.ofPosix("abc"))
+        );
+
+
+        Assertions.assertTrue(
                 PosixPath.ofPosix("/abc/def/hij").endsWith(PosixPath.ofPosix("def/hij"))
         );
         Assertions.assertFalse(
                 PosixPath.ofPosix("/abc/def/hij").endsWith(PosixPath.ofPosix("def/hij1"))
+        );
+
+        Assertions.assertTrue(
+                PosixPath.ofPosix("/abc/def/hij").contains(PosixPath.ofPosix("def/hij"))
+        );
+        Assertions.assertFalse(
+                PosixPath.ofPosix("/abc/def/hij").contains(PosixPath.ofPosix("/hij"))
+        );
+
+
+        Assertions.assertTrue(
+                PosixPath.ofPosix("/abc/def/hij").contains(PosixPath.ofPosix("def"))
         );
     }
 
@@ -116,9 +146,45 @@ class PosixPathTest {
     }
 
     @Test
+    void testIteratorBackwards() {
+        Iterator<PosixPath> iterator = PosixPath.relate().climb("foo", "bar")
+                .iterateDescending();
+
+        List<PosixPath> found = new LinkedList<>();
+
+        Iterator<PosixPath> backwardsIterator = Streams.stream(iterator)
+                .collect(Collectors.toCollection(LinkedList::new))
+                .descendingIterator();
+        Streams.stream(backwardsIterator).forEach(pp -> {
+            found.add(pp.climb("conf.properties"));
+        });
+
+        found.stream().map(PosixPath::toString).forEach(log::info);
+    }
+
+    @Test
+    void testIteratorBackwardsAbs() {
+        List<String> found = new LinkedList<>();
+        PosixPath.root().climb("foo", "bar")
+                .streamClimbing()
+                .forEach(pp -> {
+                    found.add(pp.climb("conf.properties").toString());
+                });
+
+        Assertions.assertIterableEquals(
+                List.of("/conf.properties",
+                        "/foo/conf.properties",
+                        "/foo/bar/conf.properties"),
+                found
+        );
+        found.forEach(log::info);
+    }
+
+    @Test
     void testIterator() {
         Iterator<PosixPath> iterator = PosixPath.relate().climb("foo", "bar")
-                .iterator();
+                .iterateDescending();
+
 
         PosixPath next = null;
         List<PosixPath> seq = new ArrayList<>();
@@ -138,51 +204,6 @@ class PosixPathTest {
 
         Assertions.assertEquals(Path.of(""), next.toPath());
         Assertions.assertFalse(next.isAbsolute());
-    }
-
-    @Test
-    void testDescend() {
-
-        Assertions.assertIterableEquals(
-                List.of(PosixPath.relate().climb("foo", "bar"),
-                        PosixPath.relate().climb("foo"),
-                        PosixPath.relate().climb()),
-                PosixPath.relate().climb("foo", "bar")
-                        .descendStream()
-                        .collect(Collectors.toList())
-        );
-    }
-
-    @Test
-    void testDescendReverted() {
-
-        List<PosixPath> descend = new ArrayList<>(PosixPath.relate().climb("foo", "bar")
-                .descendStream()
-                .map(pp -> pp.climb(PosixPath.relate().climb("obj.yaml")))
-                .collect(Collectors.toList()));
-        Collections.reverse(descend);
-
-        Assertions.assertIterableEquals(
-                List.of(PosixPath.relate().climb("obj.yaml"),
-                        PosixPath.relate().climb("foo", "obj.yaml"),
-                        PosixPath.relate().climb("foo", "bar", "obj.yaml")
-                ),
-                descend
-        );
-    }
-
-    @Test
-    void testDescendWithClimb() {
-
-        Assertions.assertIterableEquals(
-                List.of(PosixPath.relate().climb("foo", "bar", "obj.yaml"),
-                        PosixPath.relate().climb("foo", "obj.yaml"),
-                        PosixPath.relate().climb("obj.yaml")),
-                PosixPath.relate().climb("foo", "bar")
-                        .descendStream()
-                        .map(pp -> pp.climb(PosixPath.relate().climb("obj.yaml")))
-                        .collect(Collectors.toList())
-        );
     }
 
 }

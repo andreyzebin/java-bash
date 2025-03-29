@@ -1,16 +1,15 @@
 package io.github.zebin.javabash.sandbox;
 
+import com.google.common.collect.Streams;
+
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class PosixPath implements Iterable<PosixPath> {
+public class PosixPath {
 
     public static final PosixPath CURRENT = ofPosix(".");
     public static final PosixPath LEVEL_UP = ofPosix("..");
@@ -54,8 +53,8 @@ public class PosixPath implements Iterable<PosixPath> {
         ).collect(Collectors.joining("/"));
     }
 
-    @Override
-    public Iterator<PosixPath> iterator() {
+
+    public Iterator<PosixPath> iterateDescending() {
         return new Iterator<>() {
             private PosixPath it = PosixPath.this;
 
@@ -75,6 +74,20 @@ public class PosixPath implements Iterable<PosixPath> {
                 return it1;
             }
         };
+    }
+
+    public Stream<PosixPath> streamDescending() {
+        return Streams.stream(iterateDescending());
+    }
+
+    public Stream<PosixPath> streamClimbing() {
+        return Streams.stream(iterateClimbing());
+    }
+
+    private Iterator<PosixPath> iterateClimbing() {
+        return streamDescending()
+                .collect(Collectors.toCollection(LinkedList::new))
+                .descendingIterator();
     }
 
     public static PosixPath root() {
@@ -120,10 +133,31 @@ public class PosixPath implements Iterable<PosixPath> {
         return temp.equals(pp);
     }
 
+    public boolean contains(PosixPath pp) {
+        PosixPath temp = this;
+
+        while (temp.length() > 0) {
+            if (temp.endsWith(pp)) {
+                return true;
+            }
+
+            temp = temp.descend();
+        }
+
+        return false;
+    }
+
     public boolean endsWith(PosixPath pp) {
-        if (pp.isAbsolute()) {
+        if (pp.length() > length()) {
             return false;
         }
+
+        // This check saves from using climb with absolute
+        if (pp.isAbsolute()) {
+            return pp.equals(this);
+        }
+
+
         PosixPath temp = this;
 
         while (temp.length() + pp.length() > this.length()) {
@@ -185,10 +219,6 @@ public class PosixPath implements Iterable<PosixPath> {
 
     public boolean isAbsolute() {
         return isAbsolute;
-    }
-
-    public Stream<PosixPath> descendStream() {
-        return StreamSupport.stream(this.spliterator(), false);
     }
 
     @Override

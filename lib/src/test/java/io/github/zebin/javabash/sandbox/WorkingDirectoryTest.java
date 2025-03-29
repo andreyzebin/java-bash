@@ -35,16 +35,13 @@ class WorkingDirectoryTest {
         workingDirectory.traverse(
                 PosixPath.ofPosix(""),
                 f -> {
+                    found.add(f);
                     return !f.endsWith(PosixPath.ofPosix(".git")) &&
                             !f.endsWith(PosixPath.ofPosix("build")) &&
                             !f.endsWith(PosixPath.ofPosix(".gradle")) &&
                             !f.endsWith(PosixPath.ofPosix("gradle")) &&
                             !f.endsWith(PosixPath.ofPosix(".idea")) &&
                             !f.endsWith(PosixPath.ofPosix(".github"));
-                },
-                f -> {
-                    found.add(f);
-                    return false;
                 }
         );
 
