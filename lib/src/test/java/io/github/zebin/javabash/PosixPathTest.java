@@ -167,9 +167,7 @@ class PosixPathTest {
         List<String> found = new LinkedList<>();
         PosixPath.root().climb("foo", "bar")
                 .streamClimbing()
-                .forEach(pp -> {
-                    found.add(pp.climb("conf.properties").toString());
-                });
+                .forEach(pp -> found.add(pp.climb("conf.properties").toString()));
 
         Assertions.assertIterableEquals(
                 List.of("/conf.properties",
