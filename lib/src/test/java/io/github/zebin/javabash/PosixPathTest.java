@@ -31,6 +31,12 @@ class PosixPathTest {
     }
 
     @Test
+    void testRelativize() {
+        Assertions.assertEquals(PosixPath.ofPosix("def"),
+                PosixPath.ofPosix("/abc/def").relativize(PosixPath.ofPosix("/abc")));
+    }
+
+    @Test
     void testStartsWith() {
         Assertions.assertTrue(
                 PosixPath.ofPosix("/abc/def").startsWith(PosixPath.ofPosix("/abc"))

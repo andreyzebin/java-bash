@@ -178,7 +178,7 @@ public class PosixPath {
             ));
         }
         PosixPath temp = this;
-        for (int i = 0; i < root.length() - 1; i++) {
+        for (int i = 0; i < root.length(); i++) {
             temp = temp.elevate();
         }
 
