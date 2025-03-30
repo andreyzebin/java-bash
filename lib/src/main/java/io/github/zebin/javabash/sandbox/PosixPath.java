@@ -167,6 +167,24 @@ public class PosixPath {
         return temp.climb(pp).equals(this);
     }
 
+    public PosixPath elevate() {
+        return new PosixPath(start + 1, endInclusive, false, segments);
+    }
+
+    public PosixPath relativize(PosixPath root) {
+        if (!startsWith(root)) {
+            throw new IllegalArgumentException(String.format(
+                    "Could not relativize, because: given <root>: %s is not what <this>: %s starts with", root, this
+            ));
+        }
+        PosixPath temp = this;
+        for (int i = 0; i < root.length() - 1; i++) {
+            temp = temp.elevate();
+        }
+
+        return temp;
+    }
+
     public static PosixPath of(Path path) {
         List<String> list = new ArrayList<>();
         path.iterator().forEachRemaining((k) -> {
