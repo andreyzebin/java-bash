@@ -4,10 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import java.io.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -15,77 +14,124 @@ public class WorkingDirectory implements DirectoryTree {
 
     private final FileManager delegate;
     private final Consumer<FileEvent> listener;
+    private final PosixPath wd;
 
     public WorkingDirectory(
             FileManager delegate,
+            PosixPath wd,
             Consumer<FileEvent> listener
     ) {
         this.delegate = delegate;
         this.listener = listener;
+        this.wd = wd;
     }
 
     @Override
     public Writer put(PosixPath path) {
-        validate(path);
-        if (path.length() > 1) {
-            delegate.makeDir(path.descend());
-        }
-        fireChange(path);
-        return delegate.write(path);
+        return setupDir(delegate, () -> {
+            validate(path);
+            return new StringWriter() {
+                @Override
+                public void close() throws IOException {
+                    setupDir(delegate, () -> {
+                        validate(path);
+                        if (path.length() > 1) {
+                            delegate.makeDir(path.descend());
+                        }
+                        fireChange(path);
+                        Writer wr = delegate.write(path);
+                        try {
+                            wr.write(this.toString());
+                            wr.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        return 0;
+                    });
+                }
+            };
+        });
     }
 
     private void fireChange(PosixPath path) {
         log.debug("File changed {}", path);
-        listener.accept(FileEvent.builder()
-                .type(FileEvent.FileEventType.CHANGED)
-                .path(path).build());
+        listener.accept(
+                FileEvent.builder()
+                        .type(FileEvent.FileEventType.CHANGED)
+                        .path(path).build()
+        );
     }
 
     @Override
     public boolean delete(PosixPath path) {
-        validate(path);
-        fireChange(path);
-        return delegate.remove(path);
+        return setupDir(delegate, () -> {
+            validate(path);
+            fireChange(path);
+            return delegate.remove(path);
+        });
     }
 
     @Override
     public Writer patch(PosixPath path) {
-        validate(path);
-        if (path.length() > 1) {
-            delegate.makeDir(path.descend());
-        }
-        fireChange(path);
-        return delegate.append(path);
+        return setupDir(delegate, () -> {
+            validate(path);
+            return new StringWriter() {
+                @Override
+                public void close() throws IOException {
+                    setupDir(delegate, () -> {
+                        validate(path);
+                        if (path.length() > 1) {
+                            delegate.makeDir(path.descend());
+                        }
+                        fireChange(path);
+                        Writer wr = delegate.append(path);
+                        try {
+                            wr.append(this.toString());
+                            wr.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        return 0;
+                    });
+                }
+            };
+        });
     }
 
     @Override
     public Reader get(PosixPath path) {
-        validate(path);
-        return new StringReader(delegate.read(path));
+        return setupDir(delegate, () -> {
+            validate(path);
+            return new StringReader(delegate.read(path));
+        });
     }
 
     @Override
     public boolean exists(PosixPath path) {
-        validate(path);
-        return delegate.exists(path);
+        return setupDir(delegate, () -> {
+            validate(path);
+            return delegate.exists(path);
+        });
     }
 
     @Override
     public boolean isDir(PosixPath path) {
-        validate(path);
-        return delegate.dirExists(path);
-    }
-
-    @Override
-    public int run(String cmd, Consumer<String> stdOut, Consumer<String> stdErr) {
-        return delegate.run(cmd, stdOut, stdErr);
+        return setupDir(delegate, () -> {
+            validate(path);
+            return delegate.dirExists(path);
+        });
     }
 
     @Override
     public Stream<PosixPath> list(PosixPath path) {
-        validate(path);
-        return delegate.list(path).stream()
-                .filter(p -> !(p.equals(PosixPath.CURRENT) || p.equals(PosixPath.LEVEL_UP)));
+        return setupDir(delegate, () -> {
+            validate(path);
+            return delegate.list(path)
+                    .stream()
+                    .filter(p -> !(p.equals(PosixPath.CURRENT) || p.equals(PosixPath.LEVEL_UP)));
+        });
     }
 
     @Builder
@@ -96,6 +142,22 @@ public class WorkingDirectory implements DirectoryTree {
 
         public enum FileEventType {
             CHANGED();
+        }
+    }
+
+    public <T> T setupDir(FileManager fm, Supplier<T> result) {
+        PosixPath pwd = fm.getCurrent();
+        log.debug("File manager state saved.");
+        try {
+            if (!pwd.equals(wd)) {
+                fm.go(wd);
+            }
+            return result.get();
+        } finally {
+            if (!pwd.equals(wd)) {
+                fm.go(pwd);
+            }
+            log.debug("File manager state recovered.");
         }
     }
 }

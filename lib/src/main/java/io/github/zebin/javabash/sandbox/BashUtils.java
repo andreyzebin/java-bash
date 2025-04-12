@@ -140,4 +140,13 @@ public class BashUtils {
             bash.eval("cd " + pwd);
         }
     }
+
+    public static <T> T lockDir(FileManager fm, Supplier<T> result) {
+        PosixPath pwd = fm.getCurrent();
+        try {
+            return result.get();
+        } finally {
+            fm.go(pwd);
+        }
+    }
 }

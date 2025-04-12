@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,8 +31,8 @@ public class FileManager {
         return getCurrent();
     }
 
-    public int run(String comm, Consumer<String> stdout, Consumer<String> stderr) {
-        return delegate.exec(comm, stdout, stderr);
+    public TextTerminal getTerminal() {
+        return delegate;
     }
 
     public String read(PosixPath pp) {

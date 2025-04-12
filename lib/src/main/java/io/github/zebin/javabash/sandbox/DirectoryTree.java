@@ -34,8 +34,6 @@ public interface DirectoryTree {
 
     boolean isDir(PosixPath path);
 
-    int run(String cmd, Consumer<String> stdOut, Consumer<String> stdErr);
-
     Stream<PosixPath> list(PosixPath path);
 
     /**

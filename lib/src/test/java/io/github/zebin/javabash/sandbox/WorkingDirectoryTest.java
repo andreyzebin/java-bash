@@ -29,7 +29,7 @@ class WorkingDirectoryTest {
         );
         sandBox.goUp();
 
-        WorkingDirectory workingDirectory = new WorkingDirectory(sandBox, (e) -> {
+        WorkingDirectory workingDirectory = new WorkingDirectory(sandBox, sandBox.getCurrent(), (e) -> {
         });
         List<PosixPath> found = new LinkedList<>();
 
