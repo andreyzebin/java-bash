@@ -150,6 +150,7 @@ public class WorkingDirectory implements DirectoryTree {
         log.debug("File manager state saved.");
         try {
             if (!pwd.equals(wd)) {
+                fm.makeDir(wd);
                 fm.go(wd);
             }
             return result.get();

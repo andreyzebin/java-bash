@@ -15,7 +15,8 @@ public interface TextTerminal {
         StringBuilder stringBuilder = new StringBuilder();
         int exec = exec(comm, stringBuilder::append, stringBuilder::append);
         if (exec != 0) {
-            throw new RuntimeException(String.format("Could not evaluate '%s', returned non-zero: " + exec, comm));
+            throw new RuntimeException(String.format("Line '%s' failed with code: %d", comm, exec),
+                    new RuntimeException("Outputs: " + stringBuilder));
         }
         return stringBuilder.toString().lines().collect(Collectors.joining(System.lineSeparator()));
     }
