@@ -10,11 +10,15 @@ import io.github.zebin.javabash.frontend.FunnyTerminalConfigs;
 import io.github.zebin.javabash.process.TerminalProcess;
 import io.github.zebin.javabash.process.TextTerminal;
 import io.github.zebin.javabash.sandbox.BashUtils;
+import io.github.zebin.javabash.sandbox.FileManager;
+import io.github.zebin.javabash.sandbox.PosixPath;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -22,6 +26,24 @@ import java.util.stream.Collectors;
 
 @Slf4j
 class CommonUseTest {
+    static TextTerminal tt;
+    static FileManager fm;
+    static PosixPath buildRoot;
+
+    @BeforeAll
+    static void prepareAll() {
+        tt = new FunnyTerminal(new TerminalProcess(BashUtils.runShellForOs(Runtime.getRuntime())));
+        fm = new FileManager(tt);
+        fm.goUp();
+        buildRoot = fm.getCurrent();
+        mockRemote(buildRoot, fm);
+    }
+
+
+    @BeforeEach
+    void prepare() {
+        // do nothing
+    }
 
     @Test
     void exec() {
@@ -67,8 +89,8 @@ class CommonUseTest {
             t.eval(String.format("touch %s", jsonTempFile));
             t.eval(String.format("echo '{ \"foo\":\"bar\" }' > %s", jsonTempFile));
             t.eval(String.format("curl -s -H \"Content-Type: application/json\" " +
-                            "--data @%s " +
-                            "-X PUT http://localhost:4000/dir1/f", jsonTempFile)
+                    "--data @%s " +
+                    "-X PUT http://localhost:4000/dir1/f", jsonTempFile)
             );
 
             String eval = t.eval("curl -s http://localhost:4000/dir1/f");
@@ -91,5 +113,16 @@ class CommonUseTest {
 
         private String foo;
 
+    }
+
+    public static void mockRemote(PosixPath buildRoot, FileManager fm) {
+        PosixPath testEnv = buildRoot.climb("test-environment", "file-server");
+
+        fm.go(testEnv);
+        String eval = fm.getTerminal().eval("docker container ls --filter name=file-server");
+        if (eval.lines().count() > 1) {
+            fm.getTerminal().eval("docker compose restart");
+        }
+        fm.getTerminal().eval("docker compose up -d");
     }
 }
