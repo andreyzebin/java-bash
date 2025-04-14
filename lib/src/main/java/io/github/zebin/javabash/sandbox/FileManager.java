@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class FileManager {
+public class FileManager implements DirWalker {
 
     private final TextTerminal delegate;
 
@@ -18,14 +18,17 @@ public class FileManager {
         this.delegate = delegate;
     }
 
+    @Override
     public PosixPath getCurrent() {
         return PosixPath.ofPosix(delegate.eval("pwd"));
     }
 
+    @Override
     public PosixPath goUp() {
         return go(PosixPath.LEVEL_UP);
     }
 
+    @Override
     public PosixPath go(PosixPath path) {
         delegate.eval(String.format("cd %s", path));
         return getCurrent();

@@ -35,7 +35,7 @@ var junitVersion = "5.10.1"
 
 // publication
 group = "io.github.andreyzebin"
-version = "0.0.13"
+version = "0.0.14"
 
 dependencies {
     // Use JUnit Jupiter for testing.
