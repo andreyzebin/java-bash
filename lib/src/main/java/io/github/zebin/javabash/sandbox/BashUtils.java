@@ -99,16 +99,22 @@ public class BashUtils {
     }
 
     public static Process runShellForOs(Runtime r) {
-        String osNameLowercased = System.getProperty("os.name").toLowerCase();
-        log.debug("OS name = {}", osNameLowercased);
-        boolean isWindows = osNameLowercased.startsWith("windows");
+        log.debug("OS name = {}", getOsName());
 
-        if (isWindows) {
+        if (isWindows()) {
             log.debug("Windows OS is found");
             return runShell(r, WIN_BASH_PATH);
         }
         log.debug("Linux OS is found");
         return runShell(r, "bash");
+    }
+
+    public static boolean isWindows() {
+        return getOsName().toLowerCase().startsWith("windows");
+    }
+
+    private static String getOsName() {
+        return System.getProperty("os.name");
     }
 
     private static void openSecret(TextTerminal bash, String key, String value) {

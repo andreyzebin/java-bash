@@ -27,6 +27,14 @@ public class PosixPath {
 
 
     public Path toPath() {
+        if (BashUtils.isWindows() && isAbsolute()) {
+            PosixPath disk = this;
+            while (disk.length() > 1) {
+                disk = disk.descend();
+            }
+            return Path.of(disk.getEnd().toUpperCase() + ":\\")
+                    .resolve(relativize(disk).toString().replace("/", "\\"));
+        }
         return length() > 0 ?
                 (
                         isAbsolute ? Path.of(
@@ -186,6 +194,14 @@ public class PosixPath {
     }
 
     public static PosixPath of(Path path) {
+        if (BashUtils.isWindows() && path.isAbsolute()) {
+            Path disk = path.getRoot();
+            return PosixPath.ofPosix("/" + disk.toString().toLowerCase()
+                            .replace("\\", "")
+                            .replace(":", ""))
+                    .climb(PosixPath.of(disk.relativize(path)));
+        }
+
         List<String> list = new ArrayList<>();
         path.iterator().forEachRemaining((k) -> {
             if (!k.toString().isBlank()) {
