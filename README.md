@@ -1,6 +1,6 @@
 # java-bash
 Run commands in bash terminal session
-pkg:maven/io.github.andreyzebin/java-bash@0.0.12
+pkg:maven/io.github.andreyzebin/java-bash@0.0.13
 
 ```
 ./gradlew clean test
