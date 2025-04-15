@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -146,8 +147,9 @@ public class WorkingDirectory implements DirectoryTree {
     }
 
     public <T> T setupDir(Supplier<T> result) {
+        String corrId = UUID.randomUUID().toString().substring(1, 3);
+        log.debug("File manager state #{} saving...", corrId);
         PosixPath pwd = delegate.getCurrent();
-        log.debug("File manager state saved.");
         try {
             if (!pwd.equals(wd)) {
                 delegate.makeDir(wd);
@@ -158,7 +160,7 @@ public class WorkingDirectory implements DirectoryTree {
             if (!pwd.equals(wd)) {
                 delegate.go(pwd);
             }
-            log.debug("File manager state recovered.");
+            log.debug("File manager state #{} recovered.", corrId);
         }
     }
 }
