@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class FileManager implements DirWalker {
+public class FileManager implements DirWalker, DirChanger {
 
     private final TextTerminal delegate;
 
@@ -42,6 +42,7 @@ public class FileManager implements DirWalker {
         return delegate.eval(String.format("cat %s", pp));
     }
 
+    @Override
     public Writer write(PosixPath pp) {
         return new StringWriter() {
             @Override
@@ -52,6 +53,7 @@ public class FileManager implements DirWalker {
         };
     }
 
+    @Override
     public Writer append(PosixPath pp) {
         return new StringWriter() {
             @Override
@@ -62,6 +64,7 @@ public class FileManager implements DirWalker {
         };
     }
 
+    @Override
     public PosixPath makeFile(PosixPath newDir) {
         delegate.eval(String.format("touch %s", newDir));
         return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
@@ -76,6 +79,7 @@ public class FileManager implements DirWalker {
         return eval.lines().map(path::climb).collect(Collectors.toList());
     }
 
+    @Override
     public PosixPath makeDir(PosixPath newDir) {
         delegate.eval(String.format("mkdir -p %s", newDir));
         return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
@@ -95,11 +99,13 @@ public class FileManager implements DirWalker {
                 .contains("YES");
     }
 
+    @Override
     public boolean removeDir(PosixPath newDir) {
         String eval = delegate.eval(String.format("rm -vrf %s", newDir));
         return eval.lines().findAny().isPresent();
     }
 
+    @Override
     public boolean remove(PosixPath path) {
         if (dirExists(path)) {
             return removeDir(path);
@@ -108,6 +114,7 @@ public class FileManager implements DirWalker {
         return removeFile(path);
     }
 
+    @Override
     public boolean removeFile(PosixPath file) {
         StringBuilder err = new StringBuilder();
         StringBuilder std = new StringBuilder();
