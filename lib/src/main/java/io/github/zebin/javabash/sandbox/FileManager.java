@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class FileManager implements DirWalker, DirChanger {
-
+public class FileManager implements DirWalker, DirChanger, DirViewer, BashPower {
     private final TextTerminal delegate;
 
     public FileManager(TextTerminal delegate) {
@@ -34,10 +33,12 @@ public class FileManager implements DirWalker, DirChanger {
         return getCurrent();
     }
 
+    @Override
     public TextTerminal getTerminal() {
         return delegate;
     }
 
+    @Override
     public String read(PosixPath pp) {
         return delegate.eval(String.format("cat %s", pp));
     }
@@ -70,10 +71,12 @@ public class FileManager implements DirWalker, DirChanger {
         return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
     }
 
+    @Override
     public List<PosixPath> list() {
         return list(getCurrent());
     }
 
+    @Override
     public List<PosixPath> list(PosixPath path) {
         String eval = delegate.eval(String.format("ls -A %s", path));
         return eval.lines().map(path::climb).collect(Collectors.toList());
@@ -85,15 +88,18 @@ public class FileManager implements DirWalker, DirChanger {
         return newDir.isAbsolute() ? newDir : getCurrent().climb(newDir);
     }
 
+    @Override
     public boolean dirExists(PosixPath newDir) {
         return delegate.eval(String.format("if [ -d %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
                 .contains("YES");
     }
 
+    @Override
     public boolean exists(PosixPath path) {
         return fileExists(path) || dirExists(path);
     }
 
+    @Override
     public boolean fileExists(PosixPath newDir) {
         return delegate.eval(String.format("if [ -f %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
                 .contains("YES");
