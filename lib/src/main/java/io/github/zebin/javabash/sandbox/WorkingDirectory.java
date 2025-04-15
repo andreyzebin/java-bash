@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 @Slf4j
 public class WorkingDirectory implements DirectoryTree {
 
-    private final FileManager delegate;
+    private final AllFileManager delegate;
     private final Consumer<FileEvent> listener;
     private final PosixPath wd;
 
     public WorkingDirectory(
-            FileManager delegate,
+            AllFileManager delegate,
             PosixPath wd,
             Consumer<FileEvent> listener
     ) {
@@ -28,12 +28,12 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public Writer put(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             return new StringWriter() {
                 @Override
                 public void close() throws IOException {
-                    setupDir(delegate, () -> {
+                    setupDir(() -> {
                         validate(path);
                         if (path.length() > 1) {
                             delegate.makeDir(path.descend());
@@ -65,7 +65,7 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public boolean delete(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             fireChange(path);
             return delegate.remove(path);
@@ -74,12 +74,12 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public Writer patch(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             return new StringWriter() {
                 @Override
                 public void close() throws IOException {
-                    setupDir(delegate, () -> {
+                    setupDir(() -> {
                         validate(path);
                         if (path.length() > 1) {
                             delegate.makeDir(path.descend());
@@ -102,7 +102,7 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public Reader get(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             return new StringReader(delegate.read(path));
         });
@@ -110,7 +110,7 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public boolean exists(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             return delegate.exists(path);
         });
@@ -118,7 +118,7 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public boolean isDir(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             return delegate.dirExists(path);
         });
@@ -126,7 +126,7 @@ public class WorkingDirectory implements DirectoryTree {
 
     @Override
     public Stream<PosixPath> list(PosixPath path) {
-        return setupDir(delegate, () -> {
+        return setupDir(() -> {
             validate(path);
             return delegate.list(path)
                     .stream()
@@ -145,18 +145,18 @@ public class WorkingDirectory implements DirectoryTree {
         }
     }
 
-    public <T> T setupDir(FileManager fm, Supplier<T> result) {
-        PosixPath pwd = fm.getCurrent();
+    public <T> T setupDir(Supplier<T> result) {
+        PosixPath pwd = delegate.getCurrent();
         log.debug("File manager state saved.");
         try {
             if (!pwd.equals(wd)) {
-                fm.makeDir(wd);
-                fm.go(wd);
+                delegate.makeDir(wd);
+                delegate.go(wd);
             }
             return result.get();
         } finally {
             if (!pwd.equals(wd)) {
-                fm.go(pwd);
+                delegate.go(pwd);
             }
             log.debug("File manager state recovered.");
         }
