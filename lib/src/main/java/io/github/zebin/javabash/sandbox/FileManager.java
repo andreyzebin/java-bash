@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class FileManager implements DirWalker, DirChanger, DirViewer, BashPower {
+public class FileManager implements AllFileManager {
     private final TextTerminal delegate;
 
     public FileManager(TextTerminal delegate) {
