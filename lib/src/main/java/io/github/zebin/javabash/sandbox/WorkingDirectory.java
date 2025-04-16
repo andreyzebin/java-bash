@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -146,6 +147,7 @@ public class WorkingDirectory implements DirectoryTree {
         }
     }
 
+    @Override
     public <T> T setupDir(Supplier<T> result) {
         String corrId = UUID.randomUUID().toString().substring(1, 3);
         log.debug("File manager state #{} saving...", corrId);
@@ -162,5 +164,13 @@ public class WorkingDirectory implements DirectoryTree {
             }
             log.debug("File manager state #{} recovered.", corrId);
         }
+    }
+
+    @Override
+    public void traverse(PosixPath start, Function<PosixPath, Boolean> sayEnter) {
+        setupDir(() -> {
+            DirectoryTree.super.traverse(start, sayEnter);
+            return 0;
+        });
     }
 }
