@@ -3,7 +3,6 @@ Run commands in bash terminal session
 pkg:maven/io.github.andreyzebin/java-bash@0.0.15
 
 ```
-./gradlew clean test
 ./gradlew clean build
 ./gradlew sign
 ./gradlew publishMavenJavaPublicationToMavenRepository

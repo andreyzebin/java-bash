@@ -147,7 +147,7 @@ tasks.javadoc {
 }
 
 tasks.register<Zip>("packageDistribution") {
-    archiveFileName = "json-bash-${version}.zip"
+    archiveFileName = "java-bash-${version}.zip"
     destinationDirectory = layout.buildDirectory.dir("dist")
 
     from(layout.buildDirectory.dir("repos/releases"))
