@@ -16,5 +16,8 @@ public interface DirChanger {
 
     boolean remove(PosixPath path);
 
+    /**
+     * Files and Sockets
+     */
     boolean removeFile(PosixPath file);
 }

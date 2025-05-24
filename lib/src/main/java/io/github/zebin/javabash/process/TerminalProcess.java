@@ -24,7 +24,7 @@ public class TerminalProcess implements TextTerminal {
     public TerminalProcess(Process process) {
         this.process = process;
         pw = new PrintWriter(process.getOutputStream());
-        pw.println(String.format("fu=%s ; fu+=%s ; echo $fu", fin.substring(0, 4), fin.substring(4, 8)));
+        pw.println(String.format("fu=%s ; fu=\"$fu\"%s ; echo $fu", fin.substring(0, 4), fin.substring(4, 8)));
 
         execute(
                 process,

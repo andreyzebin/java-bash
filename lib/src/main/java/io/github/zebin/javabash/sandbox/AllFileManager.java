@@ -7,6 +7,6 @@ public interface AllFileManager extends DirWalker, DirChanger, DirViewer, BashPo
     }
 
     default boolean exists(PosixPath path) {
-        return this.fileExists(path) || this.dirExists(path);
+        return fileExists(path) || dirExists(path) || socketExists(path);
     }
 }

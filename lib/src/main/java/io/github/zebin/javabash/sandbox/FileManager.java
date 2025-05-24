@@ -95,13 +95,14 @@ public class FileManager implements AllFileManager {
     }
 
     @Override
-    public boolean exists(PosixPath path) {
-        return fileExists(path) || dirExists(path);
+    public boolean fileExists(PosixPath newDir) {
+        return delegate.eval(String.format("if [ -f %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
+                .contains("YES");
     }
 
     @Override
-    public boolean fileExists(PosixPath newDir) {
-        return delegate.eval(String.format("if [ -f %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
+    public boolean socketExists(PosixPath newDir) {
+        return delegate.eval(String.format("if [ -S %s ]; then echo \"YES\"; else echo \"NO\"; fi", newDir))
                 .contains("YES");
     }
 
@@ -109,15 +110,6 @@ public class FileManager implements AllFileManager {
     public boolean removeDir(PosixPath newDir) {
         String eval = delegate.eval(String.format("rm -vrf %s", newDir));
         return eval.lines().findAny().isPresent();
-    }
-
-    @Override
-    public boolean remove(PosixPath path) {
-        if (dirExists(path)) {
-            return removeDir(path);
-        }
-
-        return removeFile(path);
     }
 
     @Override

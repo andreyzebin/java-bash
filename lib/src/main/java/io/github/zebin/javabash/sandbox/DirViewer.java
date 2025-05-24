@@ -9,9 +9,11 @@ public interface DirViewer {
 
     List<PosixPath> list(PosixPath path);
 
-    boolean dirExists(PosixPath newDir);
-
     boolean exists(PosixPath path);
 
+    boolean dirExists(PosixPath newDir);
+
     boolean fileExists(PosixPath newDir);
+
+    boolean socketExists(PosixPath newDir);
 }
